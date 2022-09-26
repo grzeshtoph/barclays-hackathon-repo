@@ -1,0 +1,9 @@
+
+enum Status {
+	OPEN, TERMINATED
+}
+
+entity Environment {
+	id Long
+    status Status
+}
