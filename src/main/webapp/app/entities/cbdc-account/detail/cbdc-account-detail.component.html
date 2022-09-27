@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="cBDCAccount">
+      <h2 data-cy="cBDCAccountDetailsHeading"><span>CBDC Account</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>Id</span></dt>
+        <dd>
+          <span>{{ cBDCAccount.id }}</span>
+        </dd>
+        <dt><span>Party Id</span></dt>
+        <dd>
+          <span>{{ cBDCAccount.partyId }}</span>
+        </dd>
+        <dt><span>Account Id</span></dt>
+        <dd>
+          <span>{{ cBDCAccount.accountId }}</span>
+        </dd>
+        <dt><span>Pip Id</span></dt>
+        <dd>
+          <span>{{ cBDCAccount.pipId }}</span>
+        </dd>
+        <dt><span>Currency Id</span></dt>
+        <dd>
+          <span>{{ cBDCAccount.currencyId }}</span>
+        </dd>
+        <dt><span>Cbdc User ID</span></dt>
+        <dd>
+          <span>{{ cBDCAccount.cbdcUserID }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/cbdc-account', cBDCAccount.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
