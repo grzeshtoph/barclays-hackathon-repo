@@ -7,6 +7,8 @@ import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 import { Authority } from 'app/config/authority.constants';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { MainComponent } from './layouts/main/main.component';
+import { AppMainComponent } from './barclays/layouts/app-main/app-main.component';
 
 @NgModule({
   imports: [
@@ -31,6 +33,10 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access.service'
         {
           path: '',
           loadChildren: () => import(`./entities/entity-routing.module`).then(m => m.EntityRoutingModule),
+        },
+        {
+          path: 'app',
+          component: AppMainComponent,
         },
         navbarRoute,
         ...errorRoute,

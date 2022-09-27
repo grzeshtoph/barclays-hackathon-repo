@@ -1,7 +1,0 @@
-//
-// Hover animations
-//
-
-[class*='hover-'] {
-  @include transition($transition-base);
-}
