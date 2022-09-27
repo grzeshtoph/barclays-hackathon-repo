@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--
+        Added the constraints for entity CBDCAccount.
+    -->
+    <changeSet id="20220927093947-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="cbdcuser_id"
+                                 baseTableName="cbdc_account"
+                                 constraintName="fk_cbdc_account__cbdcuser_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="cbdc_user"/>
+    </changeSet>
+</databaseChangeLog>

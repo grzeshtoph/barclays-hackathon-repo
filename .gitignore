@@ -94,7 +94,6 @@ out/
 *.jar
 *.war
 *.ear
-*.db
 
 ######################
 # Windows

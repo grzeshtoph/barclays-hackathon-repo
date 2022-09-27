@@ -48,6 +48,9 @@ public class CacheConfiguration {
             createCache(cm, com.hackathon.app.domain.User.class.getName());
             createCache(cm, com.hackathon.app.domain.Authority.class.getName());
             createCache(cm, com.hackathon.app.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.hackathon.app.domain.CBDCUser.class.getName());
+            createCache(cm, com.hackathon.app.domain.CBDCUser.class.getName() + ".cBDCAccounts");
+            createCache(cm, com.hackathon.app.domain.CBDCAccount.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

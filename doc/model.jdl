@@ -1,0 +1,17 @@
+
+entity CBDCUser {
+	id Long
+    email String
+    password String
+    firstName String
+    lastName String
+}
+
+entity CBDCAccount {
+	id Long
+    partyId Long
+    accountId Long
+    pipId Long
+    currencyId Long
+    cbdcUserID Long
+}

@@ -32,7 +32,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./target/h2db/db/barclayshackathonrepo;DB_CLOSE_DELAY=-1;MODE=LEGACY
+    url: jdbc:h2:file:./db/barclayshackathonrepo;DB_CLOSE_DELAY=-1;MODE=LEGACY
     username: barclaysHackathonRepo
     password:
     hikari:
@@ -109,3 +109,4 @@ jhipster:
 
 application:
   apiKey: TEAM019_dFL46L3Qcnaew4lMS1qHGLeImfKPRYEriAEJ4TH0yb1oOGHULcLnGWvm5YYgWIf5PetVgai3BnDpdyt7ZecoKmYyGlvy3DuACD94ln3aNMkfufTxaXbFT9cp
+  environmentId: 632
