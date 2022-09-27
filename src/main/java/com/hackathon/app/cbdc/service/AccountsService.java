@@ -65,23 +65,33 @@ public class AccountsService {
     }
 
     private boolean isPIP(Long providerId, Long currencyId) {
-        final var resp = paymentInterfaceProvidersPipsApi.getPipDetailsWithHttpInfo(
-            applicationProperties.getEnvironmentId(),
-            currencyId,
-            providerId
-        );
+        try {
+            final var resp = paymentInterfaceProvidersPipsApi.getPipDetailsWithHttpInfo(
+                applicationProperties.getEnvironmentId(),
+                currencyId,
+                providerId
+            );
 
-        return resp.getStatusCode().is2xxSuccessful() && PIPView.StatusEnum.ACTIVE.equals(resp.getBody().getData().getStatus());
+            return resp.getStatusCode().is2xxSuccessful() && PIPView.StatusEnum.ACTIVE.equals(resp.getBody().getData().getStatus());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isBank(Long providerId, Long currencyId) {
-        final var resp = commercialBanksApi.getCommercialBankDetailsWithHttpInfo(
-            applicationProperties.getEnvironmentId(),
-            currencyId,
-            providerId
-        );
+        try {
+            final var resp = commercialBanksApi.getCommercialBankDetailsWithHttpInfo(
+                applicationProperties.getEnvironmentId(),
+                currencyId,
+                providerId
+            );
 
-        return resp.getStatusCode().is2xxSuccessful() && CommercialBankView.StatusEnum.ACTIVE.equals(resp.getBody().getData().getStatus());
+            return (
+                resp.getStatusCode().is2xxSuccessful() && CommercialBankView.StatusEnum.ACTIVE.equals(resp.getBody().getData().getStatus())
+            );
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private GetPIPDetailsResponseBody getPIPDetails(Long currencyId, Long pipId) {
