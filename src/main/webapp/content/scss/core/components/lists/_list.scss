@@ -1,0 +1,44 @@
+//
+// List
+//
+
+.list-icon {
+  > i,
+  > svg {
+    margin-right: 1rem;
+    font-size: $font-size-sm;
+    position: relative;
+  }
+}
+
+.list-bullet {
+  > i,
+  > svg {
+    margin-right: 1rem;
+    font-size: 0.875rem;
+    position: relative;
+  }
+}
+
+.list-unstyled {
+  .list-link {
+    display: block;
+    color: $body-color;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
+    &:hover {
+      color: theme-color('primary');
+    }
+
+    > i {
+      margin-right: 0.5rem;
+      font-size: 0.75rem;
+    }
+  }
+}
+
+//
+.list-inline-item {
+  vertical-align: middle;
+}

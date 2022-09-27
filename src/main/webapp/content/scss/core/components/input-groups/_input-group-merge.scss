@@ -1,0 +1,81 @@
+//
+// Input group merge
+// merge icon and form-control
+//
+
+.input-group {
+  &.input-group-merge {
+    .input-group-text {
+      color: $input-group-addon-color;
+      background-color: $input-bg;
+      border: $input-border-width solid $input-group-addon-border-color;
+    }
+
+    .form-control {
+      box-shadow: none;
+
+      &:not(.form-control-prepend) {
+        @include border-right-radius(0);
+        border-right-width: 0;
+        padding-right: 0;
+      }
+
+      + .input-group-append {
+        margin-left: -1px;
+      }
+
+      &:focus {
+        + .input-group-prepend,
+        + .input-group-append {
+          .input-group-text {
+            border-color: $input-focus-border-color;
+          }
+        }
+      }
+    }
+
+    .form-control-prepend {
+      @include border-right-radius($input-border-radius);
+      @include border-left-radius(0);
+      border-left: 0;
+      padding-left: 0;
+
+      // Prepend the input element after the form-control so we can add some properties
+      + .input-group-prepend {
+        order: -1;
+        margin-right: -1px;
+
+        > .input-group-text {
+          border-right: 0;
+          @include border-left-radius($input-border-radius);
+        }
+      }
+    }
+
+    // Rounded pill input groups
+
+    &.rounded-pill {
+      .form-control {
+        &:not(.form-control-prepend) {
+          @include border-left-radius($rounded-pill);
+        }
+
+        + .input-group-append {
+          > .input-group-text {
+            @include border-right-radius($rounded-pill);
+          }
+        }
+      }
+
+      .form-control-prepend {
+        @include border-right-radius($rounded-pill);
+
+        + .input-group-prepend {
+          > .input-group-text {
+            @include border-left-radius($rounded-pill);
+          }
+        }
+      }
+    }
+  }
+}
