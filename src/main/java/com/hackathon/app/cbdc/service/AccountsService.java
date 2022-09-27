@@ -64,7 +64,7 @@ public class AccountsService {
             .collect(Collectors.toList());
     }
 
-    private boolean isPIP(Long providerId, Long currencyId) {
+    public boolean isPIP(Long providerId, Long currencyId) {
         try {
             final var resp = paymentInterfaceProvidersPipsApi.getPipDetailsWithHttpInfo(
                 applicationProperties.getEnvironmentId(),
