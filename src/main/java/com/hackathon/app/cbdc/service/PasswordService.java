@@ -19,8 +19,7 @@ public class PasswordService {
     public boolean matches(CharSequence password, String encodedPassword) {
         return passwordEncoder.matches(password, encodedPassword);
     }
-
-    public String getEncodedPassword(String email) {
-        return cbdcUserRepository.findCBDCUserByEmail(email).getPassword();
-    }
+    //    public String getEncodedPassword(String email) {
+    //        return cbdcUserRepository.findCBDCUserByEmail(email).orElseGet()getPassword();
+    //    }
 }

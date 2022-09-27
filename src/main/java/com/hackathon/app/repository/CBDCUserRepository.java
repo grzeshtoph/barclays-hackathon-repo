@@ -1,6 +1,7 @@
 package com.hackathon.app.repository;
 
 import com.hackathon.app.domain.CBDCUser;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +11,5 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface CBDCUserRepository extends JpaRepository<CBDCUser, Long> {
-    public CBDCUser findCBDCUserByEmail(String email);
+    Optional<CBDCUser> findCBDCUserByEmail(String email);
 }
