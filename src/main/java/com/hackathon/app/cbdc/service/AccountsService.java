@@ -78,7 +78,7 @@ public class AccountsService {
         }
     }
 
-    private boolean isBank(Long providerId, Long currencyId) {
+    public boolean isBank(Long providerId, Long currencyId) {
         try {
             final var resp = commercialBanksApi.getCommercialBankDetailsWithHttpInfo(
                 applicationProperties.getEnvironmentId(),

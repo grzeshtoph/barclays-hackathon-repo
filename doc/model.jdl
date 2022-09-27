@@ -15,3 +15,27 @@ entity CBDCAccount {
     currencyId Long
     cbdcUserID Long
 }
+
+entity CrowdfundingCampaign {
+    id Long
+    fundingGoal Long
+    fundingGoalReached Boolean
+    finished Boolean
+    escrowPartyId Long
+    escrowAccountId Long
+    escrowPipId Long
+    currencyId Long
+    campaignPartyId Long
+    campaignAccountId Long
+    campaignBankId Long
+}
+
+entity CrowdfundingContributor {
+    id Long
+    campaignId Long
+    amountDonated Long
+    partyId Long
+    accountId Long
+    pipId Long
+    currencyId Long
+}

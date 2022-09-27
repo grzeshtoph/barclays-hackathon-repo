@@ -1,0 +1,147 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-crowdfunding-campaign-heading" data-cy="CrowdfundingCampaignCreateUpdateHeading">
+        Create or edit a Crowdfunding Campaign
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" for="field_id">Id</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_fundingGoal">Funding Goal</label>
+          <input
+            type="number"
+            class="form-control"
+            name="fundingGoal"
+            id="field_fundingGoal"
+            data-cy="fundingGoal"
+            formControlName="fundingGoal"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_fundingGoalReached">Funding Goal Reached</label>
+          <input
+            type="checkbox"
+            class="form-check"
+            name="fundingGoalReached"
+            id="field_fundingGoalReached"
+            data-cy="fundingGoalReached"
+            formControlName="fundingGoalReached"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_finished">Finished</label>
+          <input type="checkbox" class="form-check" name="finished" id="field_finished" data-cy="finished" formControlName="finished" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_escrowPartyId">Escrow Party Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="escrowPartyId"
+            id="field_escrowPartyId"
+            data-cy="escrowPartyId"
+            formControlName="escrowPartyId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_escrowAccountId">Escrow Account Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="escrowAccountId"
+            id="field_escrowAccountId"
+            data-cy="escrowAccountId"
+            formControlName="escrowAccountId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_escrowPipId">Escrow Pip Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="escrowPipId"
+            id="field_escrowPipId"
+            data-cy="escrowPipId"
+            formControlName="escrowPipId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_currencyId">Currency Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="currencyId"
+            id="field_currencyId"
+            data-cy="currencyId"
+            formControlName="currencyId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_campaignPartyId">Campaign Party Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="campaignPartyId"
+            id="field_campaignPartyId"
+            data-cy="campaignPartyId"
+            formControlName="campaignPartyId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_campaignAccountId">Campaign Account Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="campaignAccountId"
+            id="field_campaignAccountId"
+            data-cy="campaignAccountId"
+            formControlName="campaignAccountId"
+          />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" for="field_campaignBankId">Campaign Bank Id</label>
+          <input
+            type="number"
+            class="form-control"
+            name="campaignBankId"
+            id="field_campaignBankId"
+            data-cy="campaignBankId"
+            formControlName="campaignBankId"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

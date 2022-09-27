@@ -51,6 +51,8 @@ public class CacheConfiguration {
             createCache(cm, com.hackathon.app.domain.CBDCUser.class.getName());
             createCache(cm, com.hackathon.app.domain.CBDCUser.class.getName() + ".cBDCAccounts");
             createCache(cm, com.hackathon.app.domain.CBDCAccount.class.getName());
+            createCache(cm, com.hackathon.app.domain.CrowdfundingCampaign.class.getName());
+            createCache(cm, com.hackathon.app.domain.CrowdfundingContributor.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

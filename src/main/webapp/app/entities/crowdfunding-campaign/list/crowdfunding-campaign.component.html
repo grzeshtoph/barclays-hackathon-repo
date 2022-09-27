@@ -1,0 +1,151 @@
+<div>
+  <h2 id="page-heading" data-cy="CrowdfundingCampaignHeading">
+    <span>Crowdfunding Campaigns</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span>Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-crowdfunding-campaign"
+        [routerLink]="['/crowdfunding-campaign/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span> Create a new Crowdfunding Campaign </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="crowdfundingCampaigns?.length === 0">
+    <span>No Crowdfunding Campaigns found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="crowdfundingCampaigns && crowdfundingCampaigns.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span>Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="fundingGoal">
+            <div class="d-flex">
+              <span>Funding Goal</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="fundingGoalReached">
+            <div class="d-flex">
+              <span>Funding Goal Reached</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="finished">
+            <div class="d-flex">
+              <span>Finished</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="escrowPartyId">
+            <div class="d-flex">
+              <span>Escrow Party Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="escrowAccountId">
+            <div class="d-flex">
+              <span>Escrow Account Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="escrowPipId">
+            <div class="d-flex">
+              <span>Escrow Pip Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="currencyId">
+            <div class="d-flex">
+              <span>Currency Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="campaignPartyId">
+            <div class="d-flex">
+              <span>Campaign Party Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="campaignAccountId">
+            <div class="d-flex">
+              <span>Campaign Account Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="campaignBankId">
+            <div class="d-flex">
+              <span>Campaign Bank Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let crowdfundingCampaign of crowdfundingCampaigns; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/crowdfunding-campaign', crowdfundingCampaign.id, 'view']">{{ crowdfundingCampaign.id }}</a>
+          </td>
+          <td>{{ crowdfundingCampaign.fundingGoal }}</td>
+          <td>{{ crowdfundingCampaign.fundingGoalReached }}</td>
+          <td>{{ crowdfundingCampaign.finished }}</td>
+          <td>{{ crowdfundingCampaign.escrowPartyId }}</td>
+          <td>{{ crowdfundingCampaign.escrowAccountId }}</td>
+          <td>{{ crowdfundingCampaign.escrowPipId }}</td>
+          <td>{{ crowdfundingCampaign.currencyId }}</td>
+          <td>{{ crowdfundingCampaign.campaignPartyId }}</td>
+          <td>{{ crowdfundingCampaign.campaignAccountId }}</td>
+          <td>{{ crowdfundingCampaign.campaignBankId }}</td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/crowdfunding-campaign', crowdfundingCampaign.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/crowdfunding-campaign', crowdfundingCampaign.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(crowdfundingCampaign)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

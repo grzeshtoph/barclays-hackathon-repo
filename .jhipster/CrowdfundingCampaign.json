@@ -1,0 +1,60 @@
+{
+  "applications": "*",
+  "changelogDate": "20220927162421",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "crowdfunding_campaign",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "fundingGoal",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "fundingGoalReached",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "finished",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "escrowPartyId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "escrowAccountId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "escrowPipId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "currencyId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "campaignPartyId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "campaignAccountId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "campaignBankId",
+      "fieldType": "Long"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "CrowdfundingCampaign",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "no"
+}

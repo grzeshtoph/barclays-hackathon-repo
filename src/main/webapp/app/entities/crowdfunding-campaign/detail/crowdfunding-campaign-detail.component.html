@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="crowdfundingCampaign">
+      <h2 data-cy="crowdfundingCampaignDetailsHeading"><span>Crowdfunding Campaign</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.id }}</span>
+        </dd>
+        <dt><span>Funding Goal</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.fundingGoal }}</span>
+        </dd>
+        <dt><span>Funding Goal Reached</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.fundingGoalReached }}</span>
+        </dd>
+        <dt><span>Finished</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.finished }}</span>
+        </dd>
+        <dt><span>Escrow Party Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.escrowPartyId }}</span>
+        </dd>
+        <dt><span>Escrow Account Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.escrowAccountId }}</span>
+        </dd>
+        <dt><span>Escrow Pip Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.escrowPipId }}</span>
+        </dd>
+        <dt><span>Currency Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.currencyId }}</span>
+        </dd>
+        <dt><span>Campaign Party Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.campaignPartyId }}</span>
+        </dd>
+        <dt><span>Campaign Account Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.campaignAccountId }}</span>
+        </dd>
+        <dt><span>Campaign Bank Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingCampaign.campaignBankId }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/crowdfunding-campaign', crowdfundingCampaign.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

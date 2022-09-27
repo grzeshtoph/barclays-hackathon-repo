@@ -1,0 +1,52 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="crowdfundingContributor">
+      <h2 data-cy="crowdfundingContributorDetailsHeading"><span>Crowdfunding Contributor</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.id }}</span>
+        </dd>
+        <dt><span>Campaign Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.campaignId }}</span>
+        </dd>
+        <dt><span>Amount Donated</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.amountDonated }}</span>
+        </dd>
+        <dt><span>Party Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.partyId }}</span>
+        </dd>
+        <dt><span>Account Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.accountId }}</span>
+        </dd>
+        <dt><span>Pip Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.pipId }}</span>
+        </dd>
+        <dt><span>Currency Id</span></dt>
+        <dd>
+          <span>{{ crowdfundingContributor.currencyId }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/crowdfunding-contributor', crowdfundingContributor.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -19,6 +19,8 @@
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220927093946_added_entity_CBDCUser.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20220927093947_added_entity_CBDCAccount.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220927162421_added_entity_CrowdfundingCampaign.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220927162422_added_entity_CrowdfundingContributor.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
 <!--    <include file="config/liquibase/changelog/20220927093947_added_entity_constraints_CBDCAccount.xml" relativeToChangelogFile="false"/>-->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->

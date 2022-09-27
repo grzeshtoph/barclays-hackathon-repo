@@ -14,6 +14,16 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'CBDCAccounts' },
         loadChildren: () => import('./cbdc-account/cbdc-account.module').then(m => m.CBDCAccountModule),
       },
+      {
+        path: 'crowdfunding-campaign',
+        data: { pageTitle: 'CrowdfundingCampaigns' },
+        loadChildren: () => import('./crowdfunding-campaign/crowdfunding-campaign.module').then(m => m.CrowdfundingCampaignModule),
+      },
+      {
+        path: 'crowdfunding-contributor',
+        data: { pageTitle: 'CrowdfundingContributors' },
+        loadChildren: () => import('./crowdfunding-contributor/crowdfunding-contributor.module').then(m => m.CrowdfundingContributorModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

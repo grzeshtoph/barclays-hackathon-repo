@@ -1,0 +1,44 @@
+{
+  "applications": "*",
+  "changelogDate": "20220927162422",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "crowdfunding_contributor",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "campaignId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "amountDonated",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "partyId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "accountId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "pipId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "currencyId",
+      "fieldType": "Long"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "CrowdfundingContributor",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "service": "no"
+}
