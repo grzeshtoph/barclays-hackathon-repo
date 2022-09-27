@@ -1,3 +1,12 @@
 package com.hackathon.app.cbdc.model;
 
-public class CbdcUser {}
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+
+@Builder
+@Getter
+public class CbdcUser {
+
+    private Long id;
+}
