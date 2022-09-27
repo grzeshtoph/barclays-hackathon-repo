@@ -1,6 +1,7 @@
 package com.hackathon.app.repository;
 
 import com.hackathon.app.domain.CBDCAccount;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CBDCAccountRepository extends JpaRepository<CBDCAccount, Long> {}
+public interface CBDCAccountRepository extends JpaRepository<CBDCAccount, Long> {
+    List<CBDCAccount> findCBDCAccountsByCbdcUserIDOrderByAccountId(Long cbdcUserId);
+}

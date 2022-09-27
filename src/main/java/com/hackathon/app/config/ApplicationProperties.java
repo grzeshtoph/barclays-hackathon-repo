@@ -16,5 +16,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private String apiKey;
-    private String environmentId;
+    private Long environmentId;
 }
