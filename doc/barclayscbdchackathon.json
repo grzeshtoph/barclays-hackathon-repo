@@ -5890,13 +5890,13 @@
 					"paymentDetails": {
 						"$ref": "#/components/schemas/PaymentInitiationDetails"
 					},
-					"consentRequestingPartyId": {
+					"consentGrantingPartyId": {
 						"$ref": "#/components/schemas/RequestingPartyId"
 					},
 					"consentRequestingBankingEntityRef": {
 						"$ref": "#/components/schemas/RequestingBankingEntityRef"
 					},
-					"bankingEntityWhereConsentRequestingPartyIsRegisteredRef": {
+					"bankingEntityWhereConsentGrantingPartyIsRegisteredRef": {
 						"$ref": "#/components/schemas/BankingEntityWhereRequestingPartyIsRegisteredRef"
 					}
 				}
@@ -6025,13 +6025,13 @@
 							"CONSUMED"
 						]
 					},
-					"consentRequestingPartyId": {
+					"consentConsentGrantingPartyId": {
 						"$ref": "#/components/schemas/RequestingPartyId"
 					},
 					"consentRequestingBankingEntityRef": {
 						"$ref": "#/components/schemas/RequestingBankingEntityRef"
 					},
-					"bankingEntityWhereRequestingPartyIsRegisteredRef": {
+					"bankingEntityWhereConsentGrantingPartyIsRegisteredRef": {
 						"$ref": "#/components/schemas/BankingEntityWhereRequestingPartyIsRegisteredRef"
 					},
 					"paymentDetails": {
@@ -6050,7 +6050,7 @@
 						"type": "integer",
 						"format": "int64"
 					},
-					"paymentAmount": {
+					"paymentAmountInCurrencyUnits": {
 						"type": "integer",
 						"format": "int64"
 					}

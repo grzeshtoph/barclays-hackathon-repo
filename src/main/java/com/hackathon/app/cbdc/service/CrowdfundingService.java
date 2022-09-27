@@ -1,20 +1,25 @@
 package com.hackathon.app.cbdc.service;
 
 import com.hackathon.app.cbdc.exception.CampaignCreationException;
-import com.hackathon.app.cbdc.exception.LoginException;
+import com.hackathon.app.cbdc.exception.CampaignDonationException;
 import com.hackathon.app.cbdc.exception.NotFoundException;
 import com.hackathon.app.cbdc.model.Campaign;
+import com.hackathon.app.cbdc.model.CampaignContributor;
 import com.hackathon.app.cbdc.model.CampaignDetails;
-import com.hackathon.app.cbdc.model.CbdcUser;
 import com.hackathon.app.client.api.CommercialBanksApi;
 import com.hackathon.app.client.api.CurrencyApi;
+import com.hackathon.app.client.api.ObPispApi;
 import com.hackathon.app.client.api.PaymentInterfaceProvidersPipsApi;
 import com.hackathon.app.client.model.Currency;
+import com.hackathon.app.client.model.MakeDomesticPaymentRequestBody;
 import com.hackathon.app.client.model.OpenAccountRequestBody;
+import com.hackathon.app.client.model.PaymentConsentView;
 import com.hackathon.app.client.model.RegisterPartyRequestBody;
 import com.hackathon.app.config.ApplicationProperties;
 import com.hackathon.app.domain.CrowdfundingCampaign;
+import com.hackathon.app.domain.CrowdfundingContributor;
 import com.hackathon.app.repository.CrowdfundingCampaignRepository;
+import com.hackathon.app.repository.CrowdfundingContributorRepository;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +36,16 @@ public class CrowdfundingService {
     private final PaymentInterfaceProvidersPipsApi paymentInterfaceProvidersPipsApi;
     private final CommercialBanksApi commercialBanksApi;
     private final CrowdfundingCampaignRepository crowdfundingCampaignRepository;
-
+    private final ObPispApi obPispApi;
     private final AccountsService accountsService;
+    private final CrowdfundingContributorRepository crowdfundingContributorRepository;
 
     @PostConstruct
     public void initApi() {
         this.currencyApi.getApiClient().setApiKey(applicationProperties.getApiKey());
         this.paymentInterfaceProvidersPipsApi.getApiClient().setApiKey(applicationProperties.getApiKey());
         this.commercialBanksApi.getApiClient().setApiKey(applicationProperties.getApiKey());
+        this.obPispApi.getApiClient().setApiKey(applicationProperties.getApiKey());
     }
 
     public Campaign startCampaign(String campaignName, Long goal, Long escrowPipId, Long campaignBankId) {
@@ -180,5 +187,54 @@ public class CrowdfundingService {
 
     public List<CrowdfundingCampaign> getCampaignList() {
         return crowdfundingCampaignRepository.findAll();
+    }
+
+    public CampaignContributor contribute(Long campaignId, Long consentId) {
+        // get campaign
+        // check, if it's open
+        final var campaign =
+            this.crowdfundingCampaignRepository.findById(campaignId).orElseThrow(() -> new CampaignDonationException("No campaign found"));
+        if (campaign.getFinished()) {
+            throw new CampaignDonationException("Campaign already finished");
+        }
+        final var currencyId = campaign.getCurrencyId();
+        final var envId = applicationProperties.getEnvironmentId();
+
+        final var consentData = obPispApi.obGetPaymentConsent(envId, currencyId, campaign.getEscrowPipId(), consentId).getData();
+
+        if (!PaymentConsentView.StatusEnum.AUTHORISED.equals(consentData.getStatus())) {
+            throw new CampaignDonationException("Payment is not authorised");
+        }
+
+        final var paymentResponse = obPispApi.obMakePaymentWithHttpInfo(
+            envId,
+            currencyId,
+            campaign.getEscrowPipId(),
+            consentId,
+            new MakeDomesticPaymentRequestBody()
+                .paymentAmountInCurrencyUnits(consentData.getPaymentDetails().getPaymentAmountInCurrencyUnits())
+                .sourceAccountId(consentData.getPaymentDetails().getSourceAccountId())
+                .destinationAccountId(consentData.getPaymentDetails().getDestinationAccountId())
+        );
+
+        if (!paymentResponse.getStatusCode().is2xxSuccessful()) {
+            throw new CampaignDonationException("Error executing payment");
+        }
+
+        return CampaignContributor
+            .builder()
+            .id(
+                this.crowdfundingContributorRepository.save(
+                        new CrowdfundingContributor()
+                            .accountId(consentData.getPaymentDetails().getSourceAccountId())
+                            .amountDonated(consentData.getPaymentDetails().getPaymentAmountInCurrencyUnits())
+                            .pipId(consentData.getBankingEntityWhereConsentGrantingPartyIsRegisteredRef().getBankingEntityId())
+                            .partyId(consentData.getConsentConsentGrantingPartyId().getPartyId())
+                            .campaignId(campaignId)
+                            .currencyId(currencyId)
+                    )
+                    .getId()
+            )
+            .build();
     }
 }
