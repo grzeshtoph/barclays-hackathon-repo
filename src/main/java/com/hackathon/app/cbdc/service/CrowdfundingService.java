@@ -1,7 +1,11 @@
 package com.hackathon.app.cbdc.service;
 
 import com.hackathon.app.cbdc.exception.CampaignCreationException;
+import com.hackathon.app.cbdc.exception.LoginException;
+import com.hackathon.app.cbdc.exception.NotFoundException;
 import com.hackathon.app.cbdc.model.Campaign;
+import com.hackathon.app.cbdc.model.CampaignDetails;
+import com.hackathon.app.cbdc.model.CbdcUser;
 import com.hackathon.app.client.api.CommercialBanksApi;
 import com.hackathon.app.client.api.CurrencyApi;
 import com.hackathon.app.client.api.PaymentInterfaceProvidersPipsApi;
@@ -11,10 +15,13 @@ import com.hackathon.app.client.model.RegisterPartyRequestBody;
 import com.hackathon.app.config.ApplicationProperties;
 import com.hackathon.app.domain.CrowdfundingCampaign;
 import com.hackathon.app.repository.CrowdfundingCampaignRepository;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CrowdfundingService {
@@ -137,5 +144,41 @@ public class CrowdfundingService {
                     .getId()
             )
             .build();
+    }
+
+    public CampaignDetails getCampaign(Long campaignId) {
+        return crowdfundingCampaignRepository
+            .findById(campaignId)
+            .map(crowdfundingCampaign -> {
+                CampaignDetails campaignDetails = new CampaignDetails();
+                campaignDetails.setId(crowdfundingCampaign.getId());
+                campaignDetails.setGoal(crowdfundingCampaign.getFundingGoal());
+                campaignDetails.setCurrentAmount(
+                    this.paymentInterfaceProvidersPipsApi.getPipAccount(
+                            applicationProperties.getEnvironmentId(),
+                            crowdfundingCampaign.getCurrencyId(),
+                            crowdfundingCampaign.getEscrowPipId(),
+                            crowdfundingCampaign.getEscrowAccountId()
+                        )
+                        .getData()
+                        .getBalance()
+                );
+                campaignDetails.setName(
+                    this.commercialBanksApi.getCommercialBankPartyDetails(
+                            applicationProperties.getEnvironmentId(),
+                            crowdfundingCampaign.getCurrencyId(),
+                            crowdfundingCampaign.getCampaignBankId(),
+                            crowdfundingCampaign.getCampaignPartyId()
+                        )
+                        .getData()
+                        .getFullLegalName()
+                );
+                return campaignDetails;
+            })
+            .orElseThrow(() -> new NotFoundException("Campaign not found"));
+    }
+
+    public List<CrowdfundingCampaign> getCampaignList() {
+        return crowdfundingCampaignRepository.findAll();
     }
 }
