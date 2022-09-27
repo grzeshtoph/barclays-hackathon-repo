@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CBDCUserRepository extends JpaRepository<CBDCUser, Long> {}
+public interface CBDCUserRepository extends JpaRepository<CBDCUser, Long> {
+    public CBDCUser findCBDCUserByEmail(String email);
+}
