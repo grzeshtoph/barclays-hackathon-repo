@@ -88,20 +88,20 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         return extractedPath.substring(0, extractionEndIndex);
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = jHipsterProperties.getCors();
-        if (!CollectionUtils.isEmpty(config.getAllowedOrigins()) || !CollectionUtils.isEmpty(config.getAllowedOriginPatterns())) {
-            log.debug("Registering CORS filter");
-            source.registerCorsConfiguration("/cbdc-api/**", config);
-            source.registerCorsConfiguration("/api/**", config);
-            source.registerCorsConfiguration("/management/**", config);
-            source.registerCorsConfiguration("/v3/api-docs", config);
-            source.registerCorsConfiguration("/swagger-ui/**", config);
-        }
-        return new CorsFilter(source);
-    }
+    //    @Bean
+    //    public CorsFilter corsFilter() {
+    //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //        CorsConfiguration config = jHipsterProperties.getCors();
+    //        if (!CollectionUtils.isEmpty(config.getAllowedOrigins()) || !CollectionUtils.isEmpty(config.getAllowedOriginPatterns())) {
+    //            log.debug("Registering CORS filter");
+    //            source.registerCorsConfiguration("/cbdc-api/**", config);
+    //            source.registerCorsConfiguration("/api/**", config);
+    //            source.registerCorsConfiguration("/management/**", config);
+    //            source.registerCorsConfiguration("/v3/api-docs", config);
+    //            source.registerCorsConfiguration("/swagger-ui/**", config);
+    //        }
+    //        return new CorsFilter(source);
+    //    }
 
     /**
      * Initializes H2 console.
