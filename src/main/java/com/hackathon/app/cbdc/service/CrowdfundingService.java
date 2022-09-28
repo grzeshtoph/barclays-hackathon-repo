@@ -2,17 +2,22 @@ package com.hackathon.app.cbdc.service;
 
 import com.hackathon.app.cbdc.exception.CampaignCreationException;
 import com.hackathon.app.cbdc.exception.CampaignDonationException;
+import com.hackathon.app.cbdc.exception.CampaignFinishException;
 import com.hackathon.app.cbdc.exception.NotFoundException;
 import com.hackathon.app.cbdc.model.Campaign;
 import com.hackathon.app.cbdc.model.CampaignContributor;
 import com.hackathon.app.cbdc.model.CampaignDetails;
 import com.hackathon.app.client.api.CommercialBanksApi;
 import com.hackathon.app.client.api.CurrencyApi;
+import com.hackathon.app.client.api.EcosystemServiceDomesticPaymentProcessorApi;
 import com.hackathon.app.client.api.ObPispApi;
 import com.hackathon.app.client.api.PaymentInterfaceProvidersPipsApi;
+import com.hackathon.app.client.model.BankingEntityAccountView;
 import com.hackathon.app.client.model.Currency;
+import com.hackathon.app.client.model.DomesticPaymentView;
 import com.hackathon.app.client.model.MakeDomesticPaymentRequestBody;
 import com.hackathon.app.client.model.OpenAccountRequestBody;
+import com.hackathon.app.client.model.PartyView;
 import com.hackathon.app.client.model.PaymentConsentView;
 import com.hackathon.app.client.model.RegisterPartyRequestBody;
 import com.hackathon.app.config.ApplicationProperties;
@@ -21,9 +26,11 @@ import com.hackathon.app.domain.CrowdfundingContributor;
 import com.hackathon.app.repository.CrowdfundingCampaignRepository;
 import com.hackathon.app.repository.CrowdfundingContributorRepository;
 import java.util.List;
+import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.Awaitility;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -39,6 +46,7 @@ public class CrowdfundingService {
     private final ObPispApi obPispApi;
     private final AccountsService accountsService;
     private final CrowdfundingContributorRepository crowdfundingContributorRepository;
+    private final EcosystemServiceDomesticPaymentProcessorApi ecosystemServiceDomesticPaymentProcessorApi;
 
     @PostConstruct
     public void initApi() {
@@ -46,6 +54,7 @@ public class CrowdfundingService {
         this.paymentInterfaceProvidersPipsApi.getApiClient().setApiKey(applicationProperties.getApiKey());
         this.commercialBanksApi.getApiClient().setApiKey(applicationProperties.getApiKey());
         this.obPispApi.getApiClient().setApiKey(applicationProperties.getApiKey());
+        this.ecosystemServiceDomesticPaymentProcessorApi.getApiClient().setApiKey(applicationProperties.getApiKey());
     }
 
     public Campaign startCampaign(String campaignName, Long goal, Long escrowPipId, Long campaignBankId) {
@@ -180,6 +189,8 @@ public class CrowdfundingService {
                         .getData()
                         .getFullLegalName()
                 );
+                campaignDetails.setFinished(crowdfundingCampaign.getFinished());
+                campaignDetails.setGoalReached(crowdfundingCampaign.getFundingGoalReached());
                 return campaignDetails;
             })
             .orElseThrow(() -> new NotFoundException("Campaign not found"));
@@ -221,6 +232,11 @@ public class CrowdfundingService {
             throw new CampaignDonationException("Error executing payment");
         }
 
+        final var campaignDetails = this.getCampaign(campaignId);
+        this.crowdfundingCampaignRepository.saveAndFlush(
+                campaign.fundingGoalReached(campaignDetails.getCurrentAmount() >= campaignDetails.getGoal())
+            );
+
         return CampaignContributor
             .builder()
             .id(
@@ -236,5 +252,142 @@ public class CrowdfundingService {
                     .getId()
             )
             .build();
+    }
+
+    public void finishCampaign(Long campaignId) {
+        // check if it's open
+        final var campaign =
+            this.crowdfundingCampaignRepository.findById(campaignId).orElseThrow(() -> new CampaignDonationException("No campaign found"));
+        if (campaign.getFinished()) {
+            throw new CampaignDonationException("Campaign already finished");
+        }
+        // check if the target is reached and close the campaign
+        final var campaignData = this.getCampaign(campaignId);
+        var goalReached = campaignData.getCurrentAmount() >= campaignData.getGoal();
+        // close the campaign
+        this.crowdfundingCampaignRepository.saveAndFlush(campaign.finished(true).fundingGoalReached(goalReached));
+        // if it's not reached - refund all participants
+        if (!goalReached) {
+            log.info("Campaign target NOT reached. Refunding all contributors");
+
+            this.crowdfundingContributorRepository.findCrowdfundingContributorsByCampaignId(campaignId)
+                .forEach(contributor -> {
+                    final var contributorAccountId = contributor.getAccountId();
+                    final var amountDonated = contributor.getAmountDonated();
+
+                    final var paymentId =
+                        this.ecosystemServiceDomesticPaymentProcessorApi.domesticPaymentEcosystemServiceMakePayment(
+                                applicationProperties.getEnvironmentId(),
+                                campaign.getCurrencyId(),
+                                new MakeDomesticPaymentRequestBody()
+                                    .destinationAccountId(contributorAccountId)
+                                    .paymentAmountInCurrencyUnits(amountDonated)
+                                    .sourceAccountId(campaign.getEscrowAccountId())
+                            )
+                            .getData()
+                            .getId();
+
+                    final Supplier<DomesticPaymentView> paymentDetailsSupplier = () ->
+                        this.ecosystemServiceDomesticPaymentProcessorApi.domesticPaymentEcosystemServiceGetPayment(
+                                applicationProperties.getEnvironmentId(),
+                                campaign.getCurrencyId(),
+                                paymentId
+                            )
+                            .getData();
+
+                    Awaitility
+                        .await()
+                        .until(() -> DomesticPaymentView.StatusEnum.COMPLETE.equals(paymentDetailsSupplier.get().getStatus()));
+
+                    log.info(
+                        "Create refund to account {}. Currently in state {}",
+                        contributorAccountId,
+                        paymentDetailsSupplier.get().getStatus()
+                    );
+                });
+        } else {
+            log.info("Campaign target reached. Transferring funds off the escrow account to campaign account");
+
+            final var paymentId =
+                this.ecosystemServiceDomesticPaymentProcessorApi.domesticPaymentEcosystemServiceMakePayment(
+                        applicationProperties.getEnvironmentId(),
+                        campaign.getCurrencyId(),
+                        new MakeDomesticPaymentRequestBody()
+                            .destinationAccountId(campaign.getCampaignAccountId())
+                            .paymentAmountInCurrencyUnits(campaignData.getCurrentAmount())
+                            .sourceAccountId(campaign.getEscrowAccountId())
+                    )
+                    .getData()
+                    .getId();
+
+            final Supplier<DomesticPaymentView> paymentDetailsSupplier = () ->
+                this.ecosystemServiceDomesticPaymentProcessorApi.domesticPaymentEcosystemServiceGetPayment(
+                        applicationProperties.getEnvironmentId(),
+                        campaign.getCurrencyId(),
+                        paymentId
+                    )
+                    .getData();
+
+            Awaitility.await().until(() -> DomesticPaymentView.StatusEnum.COMPLETE.equals(paymentDetailsSupplier.get().getStatus()));
+
+            log.info("Campaign payment to the final account currently in state: {}", paymentDetailsSupplier.get().getStatus());
+        }
+
+        // close campaign's escrow account
+        final var finalEscrowBalance =
+            this.paymentInterfaceProvidersPipsApi.getPipAccount(
+                    applicationProperties.getEnvironmentId(),
+                    campaign.getCurrencyId(),
+                    campaign.getEscrowPipId(),
+                    campaign.getEscrowAccountId()
+                )
+                .getData()
+                .getBalance();
+
+        if (finalEscrowBalance != 0) {
+            throw new CampaignFinishException("Escrow account is still not 0. Please transfer all funds from escrow account manually");
+        }
+
+        this.paymentInterfaceProvidersPipsApi.closePipAccount(
+                applicationProperties.getEnvironmentId(),
+                campaign.getCurrencyId(),
+                campaign.getEscrowPipId(),
+                campaign.getEscrowAccountId()
+            );
+
+        final Supplier<BankingEntityAccountView.StatusEnum> closeEscrowStatusSupplier = () ->
+            this.paymentInterfaceProvidersPipsApi.getPipAccount(
+                    applicationProperties.getEnvironmentId(),
+                    campaign.getCurrencyId(),
+                    campaign.getEscrowPipId(),
+                    campaign.getEscrowAccountId()
+                )
+                .getData()
+                .getStatus();
+
+        Awaitility.await().until(() -> BankingEntityAccountView.StatusEnum.CLOSED.equals(closeEscrowStatusSupplier.get()));
+
+        log.info("Escrow account of ID {} is now closed", campaign.getEscrowAccountId());
+
+        this.paymentInterfaceProvidersPipsApi.deregisterPipParty(
+                applicationProperties.getEnvironmentId(),
+                campaign.getCurrencyId(),
+                campaign.getEscrowPipId(),
+                campaign.getEscrowPartyId()
+            );
+
+        final Supplier<PartyView.StatusEnum> partyStatusSupplier = () ->
+            this.paymentInterfaceProvidersPipsApi.getPipParty(
+                    applicationProperties.getEnvironmentId(),
+                    campaign.getCurrencyId(),
+                    campaign.getEscrowPipId(),
+                    campaign.getEscrowPartyId()
+                )
+                .getData()
+                .getStatus();
+
+        Awaitility.await().until(() -> PartyView.StatusEnum.INACTIVE.equals(partyStatusSupplier.get()));
+
+        log.info("The campaign of ID {} is now finished", campaign.getId());
     }
 }

@@ -11,4 +11,6 @@ public class CampaignDetails {
     private Long goal;
     private String name;
     private Long currentAmount;
+    private Boolean finished;
+    private Boolean goalReached;
 }
